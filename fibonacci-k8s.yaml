@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fibo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fibo
+  namespace: fibo
+spec:
+  selector:
+    purpose: fibonacci
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 80
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibo
+  namespace: fibo
+  labels:
+    purpose: fibonacci
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      purpose: fibonacci
+  template:
+    metadata:
+      labels:
+        purpose: fibonacci
+    spec:
+      containers:
+      - name: fibo-api
+        image: "sumitsaiwal/fibonacci_flask:1.0"
+        args:
+          - -w 4
+        livenessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /calculate_fibonacci?n=1
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+      - name: nginx-sidecar
+        image: "nginx"
+        ports:
+          - containerPort: 80
+            protocol: TCP
+        volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx
+        livenessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /nginx-health
+            port: 80
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: fibo
+data:
+  nginx.conf: |
+    events {
+    }
+
+    http {
+      server {
+        listen 80;
+    
+        location / {
+            proxy_pass  http://localhost:8080/;
+        }
+
+        location /nginx-health {
+          access_log off;
+          return 200 "healthy\n";
+        }
+      }
+    }
+    
