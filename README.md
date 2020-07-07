@@ -13,12 +13,11 @@ references:
 - https://docs.pytest.org/en/latest/goodpractices.html#tests-outside-application-code
 - https://realpython.com/python-testing/#writing-integration-tests
 - https://flask.palletsprojects.com/en/1.1.x/testing/#testing-flask-applications
-- https://github.com/aviskase/testproject-api-example
+- https://tavern.readthedocs.io/en/latest/
 
 
 ToDo:
-- Add swagger api docs
-- acceptance test run with docker-compose
-- Authorization
-- Add logs stdout
+- swagger api docs
+- authorization
+- logger >> stdout
 - openapi specification 
