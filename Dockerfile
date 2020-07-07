@@ -16,7 +16,7 @@ RUN pip install pytest pylint
 COPY . /p_app
 RUN find . -iname "*.py" | xargs pylint --msg-template='{path}:{line}:{column}: {msg_id}: {msg} ({symbol})'; exit 0
 #https://docs.pytest.org/en/latest/goodpractices.html#tests-outside-application-code
-RUN python -m pytest tests/
+RUN python -m pytest tests/unit tests/integration
 
 #Application
 FROM base
@@ -25,6 +25,9 @@ COPY app /app
 
 # Make port 80 available for publish
 EXPOSE 8080
+
+# Heathcheck, Let's use kubernetes liveness probe
+#HEALTHCHECK CMD curl --fail http://localhost:8080/calculate_fibonacci?n=1 || exit 1
 
 # Define our entrypoint to be run when launching the container, args can be appended
 ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]

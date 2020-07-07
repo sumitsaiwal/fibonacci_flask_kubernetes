@@ -1,3 +1,0 @@
-docker build -t sumitsaiwal/fibonacci_flask:<build_no> -f Dockerfile <fibonacci_flask_directory>
-docker push sumitsaiwal/fibonacci_flask:<build_no>
-kubectl create -f fibonacci.yaml

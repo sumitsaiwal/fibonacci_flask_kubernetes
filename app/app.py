@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -17,9 +17,10 @@ def _fibonacci(n: int):
 @app.route("/calculate_fibonacci", methods=['GET'])
 def fibonacci():
     try:
-        return str(_fibonacci(int(request.args['n']))[0])
+        #return str(_fibonacci(int(request.args['n']))[0])
+        return jsonify(value=str(_fibonacci(int(request.args['n']))[0]))
     except ValueError:
-        return "Please use a number as the 'n' argument"
+        return jsonify(error="Please use a number as the 'n' argument")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)

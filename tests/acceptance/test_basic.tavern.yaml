@@ -1,0 +1,29 @@
+test_name: Make sure server return correct fibnocci
+stages:
+  - name: Make sure fibnocci number is returned correctly
+    request:
+      url: "{tavern.env_vars.API_BASE_URL}/calculate_fibonacci?n=42"
+      method: GET
+    response:
+      status_code: 200
+      json: 
+        value: "267914296"
+
+---
+
+test_name: Check invalid inputs are handled
+stages:
+  - name: Make sure invalid numbers don't cause an error
+    request:
+      url: "{tavern.env_vars.API_BASE_URL}/calculate_fibonacci?n=abc"
+      method: GET
+    response:
+      status_code: 200
+      json: 
+        error: "Please use a number as the 'n' argument"
+  - name: Make sure it raises an error if a number isn't passed
+    request:
+      url: "{tavern.env_vars.API_BASE_URL}/calculate_fibonacci"
+      method: GET
+    response:
+      status_code: 400
