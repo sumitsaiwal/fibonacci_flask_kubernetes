@@ -1,11 +1,24 @@
 # fibonacci_flask_kubernetes
-A sample python flask app, which returns n'th fibonacci number.
-The app also contains a sample for pytest.
+A sample python flask api, which returns n'th fibonacci number.
 
-Multistage dockerfile is used for the test and build.
+This is a tutorial project, which demonstrates lifecycle of a microservice in terms of DevOps.
 
-Since flask sever is only for development purposes, the app runs on gunicorn.
-The application can be deployed in kubernetes with a multicontainer pod including nginx as sidecar.
+##Topics Covered in the project
+  - sample api : flask
+  - unit test : pytest
+  - integration test : pytest
+  - api test : tavern, pytest
+  - build : docker
+  - continuous integration : github action, docker-compose
+  - Deployment : kubernetes
+
+Multistage dockerfile is used to run the test and build.
+
+Since flask sever is recomended only for development purposes, the app runs on gunicorn.
+This application can be deployed in kubernetes as a multicontainer pod (nginx as sidecar) with the following command:
+```bash
+kubectl create -f fibonacci-k8s.yaml
+```
 
 references: 
 - https://www.nayuki.io/page/fast-fibonacci-algorithms
