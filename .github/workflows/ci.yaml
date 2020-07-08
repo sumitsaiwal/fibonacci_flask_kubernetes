@@ -21,43 +21,33 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
+  build_test_push:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build and tests
+      - name: Build
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: Run tests
         run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
+          if [ -f docker-compose.test.yaml ]; then
+            docker-compose --file docker-compose.test.yaml run sut
             exitcode=$?
             docker-compose down
             exit $exitcode
           else
-            docker build . --file Dockerfile --tag $IMAGE_NAME
+            echo "`docker-compose.test.yaml` not found, nothing to run."
           fi
 
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: test
-
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME
-
+      # Ensure test step passes before pushing image.
       - name: Log into registry
+        if: github.event_name == 'push' && success()
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Push image
+        if: github.event_name == 'push'  && success()
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
           
