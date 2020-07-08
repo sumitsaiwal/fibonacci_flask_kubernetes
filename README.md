@@ -14,6 +14,7 @@ references:
 - https://realpython.com/python-testing/#writing-integration-tests
 - https://flask.palletsprojects.com/en/1.1.x/testing/#testing-flask-applications
 - https://tavern.readthedocs.io/en/latest/
+- https://github.com/docker/compose/issues/2791
 
 
 ToDo:
