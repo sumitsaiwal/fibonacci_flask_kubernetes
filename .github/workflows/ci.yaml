@@ -35,7 +35,7 @@ jobs:
           if [ -f docker-compose.test.yaml ]; then
             docker-compose --file docker-compose.test.yaml run sut
             exitcode=$?
-            docker-compose down
+            docker-compose --file docker-compose.test.yaml down
             exit $exitcode
           else
             echo "`docker-compose.test.yaml` not found, nothing to run."
