@@ -6,7 +6,7 @@ A sample python flask api, which returns n'th fibonacci number.
 
 This is a tutorial project, which demonstrates lifecycle of a microservice in terms of DevOps.
 
-##Topics Covered in the project
+### Topics Covered in the project
   - sample api : flask
   - unit test : pytest
   - integration test : pytest
