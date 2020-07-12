@@ -15,9 +15,6 @@ pool:
 
 variables:
   IMAGE_NAME: 'fibonacci_flask'
-  IMAGE_ID: ''
-  VERSION: ''
-
 
 steps:
 - task: Docker@2
@@ -51,11 +48,14 @@ steps:
     [[ "$(Build.SourceBranch)" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
     # Use Docker `latest` tag convention
     [ "$VERSION" == "master" ] && VERSION=latest
+  
+    echo IMAGE_ID=${IMAGE_ID}
+    echo VERSION=${VERSION}
+    # Add new pipeline variables
     echo "##vso[task.setvariable variable=IMAGE_ID]${IMAGE_ID}"
     echo "##vso[task.setvariable variable=VERSION]${VERSION}"
-    echo IMAGE_ID=$(IMAGE_ID)
-    echo VERSION=$(VERSION)
-    docker tag $(IMAGE_NAME) $(IMAGE_ID):$(VERSION)
+    # tag docker image
+    docker tag $(IMAGE_NAME) ${IMAGE_ID}:${VERSION}
   displayName: 'Tag Image'
     
 - task: Docker@2
