@@ -1,7 +1,6 @@
 # fibonacci_flask_kubernetes
 ![Docker Build](https://github.com/sumitsaiwal/fibonacci_flask_kubernetes/workflows/Docker%20Build/badge.svg)
 
-
 A sample python flask api, which returns n'th fibonacci number.
 
 This is a tutorial project, which demonstrates lifecycle of a microservice in terms of DevOps.
