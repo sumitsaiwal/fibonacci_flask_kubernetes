@@ -14,7 +14,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  REG_URL: 'docker.pkg.github.com/sumitsaiwal'
+  REG_URL: 'docker.pkg.github.com'
   IMAGE_NAME: 'fibonacci_flask'
   isPush: $[in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/tags/v')]
 
