@@ -14,15 +14,18 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  REG_URL: 'docker.pkg.github.com/sumitsaiwal'
   IMAGE_NAME: 'fibonacci_flask'
+  isPush: $[in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/tags/v')]
 
 steps:
 - task: Docker@2
   displayName: 'Build Image'
   inputs:
+    repository: '$(IMAGE_NAME)'
     command: 'build'
     Dockerfile: 'Dockerfile'
-    tags: '$(IMAGE_NAME)'
+    tags: 'latest'
     addPipelineData: false
 
 - script: |
@@ -38,8 +41,8 @@ steps:
 
 
 - script: |
-    IMAGE_ID=docker.pkg.github.com/$(Build.Repository.Name)/$(IMAGE_NAME)
-          
+    IMAGE_ID=$(Build.Repository.Name)/$(IMAGE_NAME)
+    
     # Change all uppercase to lowercase
     IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
     # Strip git ref prefix from version
@@ -48,15 +51,16 @@ steps:
     [[ "$(Build.SourceBranch)" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
     # Use Docker `latest` tag convention
     [ "$VERSION" == "master" ] && VERSION=latest
-  
-    echo IMAGE_ID=${IMAGE_ID}
-    echo VERSION=${VERSION}
+
     # Add new pipeline variables
     echo "##vso[task.setvariable variable=IMAGE_ID]${IMAGE_ID}"
     echo "##vso[task.setvariable variable=VERSION]${VERSION}"
+
     # tag docker image
-    docker tag $(IMAGE_NAME) ${IMAGE_ID}:${VERSION}
+    echo "tagging $(IMAGE_NAME) to $(REG_URL)/${IMAGE_ID}:${VERSION}"
+    docker tag $(IMAGE_NAME) "$(REG_URL)/${IMAGE_ID}:${VERSION}"
   displayName: 'Tag Image'
+  condition: and(succeeded(), eq(variables.isPush, true))
     
 - task: Docker@2
   inputs:
@@ -66,5 +70,6 @@ steps:
     tags: '$(VERSION)'
     addPipelineData: false
   displayName: 'Push Image'
+  condition: and(succeeded(), eq(variables.isPush, true))
 
 
